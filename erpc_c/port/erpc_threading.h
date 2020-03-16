@@ -24,6 +24,7 @@
 #include "task.h"
 #elif ERPC_THREADS_IS(ZEPHYR)
 #include "kernel.h"
+#elif ERPC_THREADS_IS(WINDOWS)
 #endif // ERPC_THREADS_IS
 
 /*!
