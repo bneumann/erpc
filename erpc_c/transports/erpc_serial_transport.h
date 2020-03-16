@@ -12,7 +12,6 @@
 
 #include "erpc_framed_transport.h"
 #include <string>
-#include <termios.h>
 
 /*!
  * @addtogroup serial_transport
@@ -54,7 +53,7 @@ public:
      *
      * @return Status of init function.
      */
-    erpc_status_t init(uint8_t vtime, uint8_t vmin);
+    virtual erpc_status_t init(uint8_t vtime, uint8_t vmin);
 
 private:
     /*!
