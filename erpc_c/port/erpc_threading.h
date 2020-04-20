@@ -136,7 +136,7 @@ public:
 #elif ERPC_THREADS_IS(FREERTOS)
         return reinterpret_cast<thread_id_t>(m_task);
 #elif ERPC_THREADS_IS(ZEPHYR)
-        return reinterpret_cast<thread_id_t>(m_thread);
+        return reinterpret_cast<thread_id_t>(m_task);
 #endif
     }
 
@@ -202,7 +202,8 @@ private:
     Thread *m_next;         /*!< Pointer to next Thread. */
     static Thread *s_first; /*!< Pointer to first Thread. */
 #elif ERPC_THREADS_IS(ZEPHYR)
-    struct k_thread m_thread;  /*!< Current thread. */
+    struct k_thread m_thread;
+    k_tid_t  m_task;  /*!< Current thread. */
     k_thread_stack_t *m_stack; /*!< Pointer to stack. */
 #endif
 
@@ -231,7 +232,7 @@ private:
      * @param[in] arg2
      * @param[in] arg3
      */
-    static void *threadEntryPointStub(void *arg1, void *arg2, void *arg3);
+    static void threadEntryPointStub(void *arg1, void *arg2, void *arg3);
 #endif
 
 private:
@@ -415,7 +416,7 @@ private:
 #elif ERPC_THREADS_IS(FREERTOS)
     SemaphoreHandle_t m_sem;   /*!< Semaphore. */
 #elif ERPC_THREADS_IS(ZEPHYR)
-    struct k_sem m_sem;     /*!< Semaphore. */
+    mutable struct k_sem m_sem;     /*!< Semaphore. */
 #endif
 
 private:

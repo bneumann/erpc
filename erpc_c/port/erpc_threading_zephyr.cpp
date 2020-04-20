@@ -23,7 +23,7 @@ Thread::Thread(const char *name)
 , m_arg(0)
 , m_stackSize(0)
 , m_priority(0)
-, m_thread(0)
+, m_task(0)
 , m_stack(0)
 {
 }
@@ -34,7 +34,7 @@ Thread::Thread(thread_entry_t entry, uint32_t priority, uint32_t stackSize, cons
 , m_arg(0)
 , m_stackSize(stackSize)
 , m_priority(priority)
-, m_thread(0)
+, m_task(0)
 , m_stack(0)
 {
 }
@@ -53,12 +53,13 @@ void Thread::start(void *arg)
     m_arg = arg;
 
     assert(m_stack && "Set stack address");
-    k_thread_create(&m_thread, m_stack, m_stackSize, threadEntryPointStub, this, NULL, NULL, m_priority, 0, K_NO_WAIT);
+    printk("About to k_thread_create\n");
+    m_task = k_thread_create(&m_thread, m_stack, m_stackSize, threadEntryPointStub, this, NULL, NULL, m_priority, 0, K_NO_WAIT);
 }
 
 bool Thread::operator==(Thread &o)
 {
-    return m_thread == o.m_thread;
+    return m_task == o.m_task;
 }
 
 Thread *Thread::getCurrentThread(void)
@@ -79,7 +80,7 @@ void Thread::threadEntryPoint(void)
     }
 }
 
-void *Thread::threadEntryPointStub(void *arg1, void *arg2, void *arg3)
+void Thread::threadEntryPointStub(void *arg1, void *arg2, void *arg3)
 {
     Thread *_this = reinterpret_cast<Thread *>(arg1);
     assert(_this && "Reinterpreting 'void *arg1' to 'Thread *' failed.");
@@ -91,7 +92,6 @@ void *Thread::threadEntryPointStub(void *arg1, void *arg2, void *arg3)
 }
 
 Mutex::Mutex(void)
-: m_mutex(0)
 {
     k_mutex_init(&m_mutex);
 }
@@ -115,7 +115,6 @@ bool Mutex::unlock(void)
 }
 
 Semaphore::Semaphore(int count)
-: m_sem(0)
 {
     // Set max count to highest signed int.
     k_sem_init(&m_sem, count, 0x7fffffff);
@@ -135,7 +134,7 @@ bool Semaphore::get(uint32_t timeout)
 
 int Semaphore::getCount(void) const
 {
-    return k_sem_count_get(m_sem));
+    return k_sem_count_get(&m_sem);
 }
 #endif /* ERPC_THREADS_IS(FREERTOS) */
 
