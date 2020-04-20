@@ -12,7 +12,6 @@
 
 #include "erpc_framed_transport.h"
 #include <string>
-#include <termios.h>
 
 /*!
  * @addtogroup serial_transport

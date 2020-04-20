@@ -12,7 +12,6 @@
 #include "erpc_serial.h"
 #include <cstdio>
 #include <string>
-#include <termios.h>
 
 using namespace erpc;
 

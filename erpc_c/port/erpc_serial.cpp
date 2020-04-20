@@ -43,7 +43,7 @@ int serial_setup(int fd, speed_t speed)
 #ifdef WIN32
     COMMTIMEOUTS timeouts;
     DCB dcb = { 0 };
-    HANDLE hCom = (HANDLE)fd;
+    HANDLE hCom = (HANDLE)(intptr_t)fd;
 
     dcb.DCBlength = sizeof(dcb);
 
@@ -130,7 +130,7 @@ int serial_set_read_timeout(int fd, uint8_t vtime, uint8_t vmin)
 {
 #ifdef WIN32
     COMMTIMEOUTS timeouts;
-    HANDLE hCom = (HANDLE)fd;
+    HANDLE hCom = (HANDLE)(intptr_t)fd;
 
     // These timeouts mean:
     // read: return if:
@@ -197,7 +197,7 @@ int serial_set_read_timeout(int fd, uint8_t vtime, uint8_t vmin)
 int serial_write(int fd, char *buf, int size)
 {
 #ifdef WIN32
-    HANDLE hCom = (HANDLE)fd;
+    HANDLE hCom = (HANDLE)(intptr_t)fd;
     unsigned long bwritten = 0;
 
     if (!WriteFile(hCom, buf, size, &bwritten, NULL))
@@ -216,7 +216,7 @@ int serial_write(int fd, char *buf, int size)
 int serial_read(int fd, char *buf, int size)
 {
 #ifdef WIN32
-    HANDLE hCom = (HANDLE)fd;
+    HANDLE hCom = (HANDLE)(intptr_t)fd;
     unsigned long bread = 0;
 
     if (!ReadFile(hCom, buf, size, &bread, NULL))
@@ -282,7 +282,7 @@ int serial_open(const char *port)
     }
     else
     {
-        fd = (int)hCom;
+        fd = (int)(intptr_t)hCom;
     }
 #else
     fd = open(port, O_RDWR | O_NOCTTY);
@@ -298,7 +298,7 @@ int serial_open(const char *port)
 int serial_close(int fd)
 {
 #ifdef WIN32
-    HANDLE hCom = (HANDLE)fd;
+    HANDLE hCom = (HANDLE)(intptr_t)fd;
 
     CloseHandle(hCom);
 #else
